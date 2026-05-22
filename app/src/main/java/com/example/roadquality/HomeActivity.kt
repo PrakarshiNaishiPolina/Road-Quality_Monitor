@@ -17,17 +17,26 @@ class HomeActivity : ComponentActivity() {
         val logoutBtn = findViewById<Button>(R.id.logoutBtn)
 
         startBtn.setOnClickListener {
+
             try {
-                startActivity(Intent(this, MainActivity::class.java))
+
+                startActivity(Intent(this, ConfigActivity::class.java))
+
             } catch (e: Exception) {
-                Toast.makeText(this, "Error opening detection", Toast.LENGTH_SHORT).show()
+
+                Toast.makeText(
+                    this,
+                    "Error opening configuration",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
         logoutBtn.setOnClickListener {
             val prefs = getSharedPreferences("user", MODE_PRIVATE)
-            prefs.edit().clear().apply()
-
+            prefs.edit()
+                .putBoolean("loggedIn", false)
+                .apply()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }

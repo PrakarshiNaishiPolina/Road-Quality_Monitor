@@ -39,6 +39,14 @@
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+    <Button
+        android:id="@+id/deleteBtn"
+        android:text="Delete All Data"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="#B71C1C"
+        android:textColor="#FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <Button
         android:id="@+id/logoutBtn"
