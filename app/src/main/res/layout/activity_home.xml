@@ -1,23 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#F5E6D3"
+    android:background="#F8FAFC"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="24dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <!-- Title -->
+
+    <TextView
+        android:text="Road Quality Monitor"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#1E3A8A"
+        android:layout_marginBottom="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- Start Button -->
 
     <Button
         android:id="@+id/startBtn"
         android:text="Start Detection"
-        android:backgroundTint="#6F4E37"
+        android:textStyle="bold"
         android:textColor="#FFFFFF"
-        android:layout_width="200dp"
+        android:backgroundTint="#2563EB"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"/>
+
+    <!-- Logout Button -->
 
     <Button
         android:id="@+id/logoutBtn"
         android:text="Logout"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#DC2626"
         android:layout_marginTop="20dp"
-        android:layout_width="200dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"/>
+
+    <!-- SRM Logo -->
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/srm_logo"
+        android:layout_marginTop="60dp"
+        android:layout_gravity="center"
+        android:contentDescription="SRM Logo"/>
 
 </LinearLayout>

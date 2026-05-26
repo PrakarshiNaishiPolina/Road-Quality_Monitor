@@ -13,32 +13,68 @@ class HomeActivity : ComponentActivity() {
 
         setContentView(R.layout.activity_home)
 
-        val startBtn = findViewById<Button>(R.id.startBtn)
-        val logoutBtn = findViewById<Button>(R.id.logoutBtn)
+        val startBtn =
+            findViewById<Button>(R.id.startBtn)
+
+        val logoutBtn =
+            findViewById<Button>(R.id.logoutBtn)
+
+        // START BUTTON
 
         startBtn.setOnClickListener {
 
             try {
 
-                startActivity(Intent(this, ConfigActivity::class.java))
+                startActivity(
+                    Intent(
+                        this,
+                        ConfigActivity::class.java
+                    )
+                )
 
             } catch (e: Exception) {
 
                 Toast.makeText(
                     this,
-                    "Error opening configuration",
+                    "Unable to open configuration",
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
 
+        // LOGOUT BUTTON
+
         logoutBtn.setOnClickListener {
-            val prefs = getSharedPreferences("user", MODE_PRIVATE)
-            prefs.edit()
-                .putBoolean("loggedIn", false)
-                .apply()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+
+            try {
+
+                val sessionPrefs =
+                    getSharedPreferences(
+                        "session",
+                        MODE_PRIVATE
+                    )
+
+                sessionPrefs.edit()
+                    .putBoolean("loggedIn", false)
+                    .apply()
+
+                startActivity(
+                    Intent(
+                        this,
+                        LoginActivity::class.java
+                    )
+                )
+
+                finish()
+
+            } catch (e: Exception) {
+
+                Toast.makeText(
+                    this,
+                    "Logout Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }

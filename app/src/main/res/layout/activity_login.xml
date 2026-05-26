@@ -1,74 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#F5E6D3"
-    android:orientation="vertical"
-    android:padding="30dp"
-    android:gravity="center"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F8FAFC">
 
-    <TextView
-        android:text="Road Quality Monitor"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#6F4E37"
-        android:layout_marginBottom="30dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <EditText
-        android:id="@+id/username"
-        android:hint="Username"
-        android:layout_marginBottom="10dp"
-        android:padding="10dp"
-        android:background="@android:drawable/edit_text"
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="30dp"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/password"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:layout_marginBottom="10dp"
-        android:padding="10dp"
-        android:background="@android:drawable/edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <!-- Title -->
 
-    <TextView
-        android:text="Select Role"
-        android:textStyle="bold"
-        android:textColor="#3E2723"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <TextView
+            android:text="Road Quality Monitor"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#1E3A8A"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:id="@+id/roleSpinner"
-        android:background="#FFFFFF"
-        android:padding="10dp"
-        android:spinnerMode="dropdown"
-        android:layout_marginBottom="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+        <!-- Employee ID -->
 
-    <Button
-        android:id="@+id/actionBtn"
-        android:text="Login"
-        android:backgroundTint="#6F4E37"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/username"
+            android:hint="Employee ID"
+            android:textColor="#111827"
+            android:textColorHint="#6B7280"
+            android:padding="14dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/toggleText"
-        android:text="Switch to Signup"
-        android:textColor="#3E2723"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        <!-- Password -->
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/password"
+            android:hint="Password"
+            android:textColor="#111827"
+            android:textColorHint="#6B7280"
+            android:inputType="textPassword"
+            android:padding="14dp"
+            android:background="@android:drawable/edit_text"
+            android:layout_marginBottom="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Role -->
+
+        <TextView
+            android:text="Select Role"
+            android:textStyle="bold"
+            android:textColor="#111827"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Spinner
+            android:id="@+id/roleSpinner"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
+
+        <!-- Login Button -->
+
+        <Button
+            android:id="@+id/actionBtn"
+            android:text="Login"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2563EB"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Toggle -->
+
+        <TextView
+            android:id="@+id/toggleText"
+            android:text="Don't have an account? Signup"
+            android:textColor="#2563EB"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- Forgot Password -->
+
+        <TextView
+            android:id="@+id/forgotText"
+            android:text="Forgot Password?"
+            android:textColor="#1E3A8A"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- SRM Logo -->
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/srm_logo"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center"
+            android:contentDescription="SRM Logo"/>
+
+    </LinearLayout>
+
+</ScrollView>

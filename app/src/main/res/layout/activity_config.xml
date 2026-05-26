@@ -3,7 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5E6D3">
+    android:background="#F8FAFC">
 
     <LinearLayout
         android:orientation="vertical"
@@ -11,100 +11,164 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- TITLE -->
+
         <TextView
             android:text="Detection Configuration"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="#6F4E37"
-            android:layout_marginBottom="20dp"
+            android:textColor="#1E3A8A"
+            android:layout_marginBottom="25dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <!-- Vehicle Type -->
+        <!-- VEHICLE -->
+
+        <TextView
+            android:text="Vehicle Type"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#111827"
+            android:layout_marginBottom="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <Spinner
             android:id="@+id/vehicleSpinner"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"/>
+            android:layout_height="50dp"/>
 
-        <!-- Pothole Threshold -->
+        <!-- POTHOLE -->
+
         <TextView
-            android:text="Pothole Shock Value"
-            android:textColor="#3E2723"
+            android:text="Pothole Value"
             android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#111827"
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <EditText
-            android:id="@+id/potholeInput"
-            android:hint="Pothole Threshold"
-            android:inputType="numberDecimal"
+        <SeekBar
+            android:id="@+id/potholeSlider"
+            android:max="20"
+            android:progressTint="#2563EB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <!-- Bump Threshold -->
 
         <TextView
-            android:text="Bump Shock Value"
-            android:textColor="#3E2723"
+            android:id="@+id/potholeValue"
+            android:text="0"
+            android:textColor="#1E3A8A"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"
+            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-        <EditText
-            android:id="@+id/bumpInput"
-            android:hint="Bump Threshold"
-            android:inputType="numberDecimal"
-            android:layout_marginTop="10dp"
+
+        <!-- BUMP -->
+
+        <TextView
+            android:text="Bump Value"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#111827"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            android:id="@+id/bumpSlider"
+            android:max="20"
+            android:progressTint="#2563EB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- Rough Road Threshold -->
+        <TextView
+            android:id="@+id/bumpValue"
+            android:text="0"
+            android:textColor="#1E3A8A"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- ROUGH ROAD -->
+
         <TextView
             android:text="Road Vibration Value"
-            android:textColor="#3E2723"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textColor="#111827"
+            android:layout_marginTop="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <EditText
-            android:id="@+id/roughInput"
-            android:hint="Rough Road Threshold"
-            android:inputType="numberDecimal"
-            android:layout_marginTop="10dp"
+        <SeekBar
+            android:id="@+id/roughSlider"
+            android:max="20"
+            android:progressTint="#2563EB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- Minimum Speed -->
         <TextView
-            android:text="Minimum Speed Value"
-            android:textColor="#3E2723"
+            android:id="@+id/roughValue"
+            android:text="0"
+            android:textColor="#1E3A8A"
             android:textStyle="bold"
-            android:layout_marginTop="10dp"
+            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <EditText
-            android:id="@+id/speedInput"
-            android:hint="Minimum Speed (m/s)"
-            android:inputType="numberDecimal"
-            android:layout_marginTop="10dp"
+        <!-- SPEED -->
+
+        <TextView
+            android:text="Minimum Speed"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#111827"
+            android:layout_marginTop="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <SeekBar
+            android:id="@+id/speedSlider"
+            android:max="20"
+            android:progressTint="#2563EB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- Start Monitoring -->
+        <TextView
+            android:id="@+id/speedValue"
+            android:text="0 m/s"
+            android:textColor="#1E3A8A"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- BUTTON -->
 
         <Button
             android:id="@+id/startMonitorBtn"
             android:text="Start Monitoring"
-            android:backgroundTint="#6F4E37"
+            android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginTop="20dp"
+            android:backgroundTint="#2563EB"
+            android:layout_marginTop="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+        <!-- LOGO -->
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/srm_logo"
+            android:layout_marginTop="60dp"
+            android:layout_gravity="center"
+            android:contentDescription="SRM Logo"/>
 
     </LinearLayout>
 

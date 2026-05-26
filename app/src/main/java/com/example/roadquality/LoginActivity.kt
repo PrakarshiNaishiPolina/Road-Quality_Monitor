@@ -10,98 +10,259 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val prefs = getSharedPreferences("user", MODE_PRIVATE)
+        val usersPrefs =
+            getSharedPreferences("users", MODE_PRIVATE)
 
-        // Auto login
-        if (prefs.getBoolean("loggedIn", false)) {
+        val sessionPrefs =
+            getSharedPreferences("session", MODE_PRIVATE)
 
-            val role = prefs.getString("role", "Driver")
+        // AUTO LOGIN
 
-            if (role.equals("Admin", true)) {
-                startActivity(Intent(this, AdminActivity::class.java))
+        if (sessionPrefs.getBoolean("loggedIn", false)) {
+
+            val role =
+                sessionPrefs.getString("role", "User")
+
+            if (role == "Admin") {
+
+                startActivity(
+                    Intent(this, AdminActivity::class.java)
+                )
+
             } else {
-                startActivity(Intent(this, HomeActivity::class.java))
+
+                startActivity(
+                    Intent(this, HomeActivity::class.java)
+                )
             }
+
             finish()
         }
 
         setContentView(R.layout.activity_login)
 
-        val username = findViewById<EditText>(R.id.username)
-        val password = findViewById<EditText>(R.id.password)
-        val roleSpinner = findViewById<Spinner>(R.id.roleSpinner)
-        val btn = findViewById<Button>(R.id.actionBtn)
-        val toggle = findViewById<TextView>(R.id.toggleText)
+        val username =
+            findViewById<EditText>(R.id.username)
 
-        val roles = arrayOf("Driver", "Admin")
+        val password =
+            findViewById<EditText>(R.id.password)
+
+        val roleSpinner =
+            findViewById<Spinner>(R.id.roleSpinner)
+
+        val actionBtn =
+            findViewById<Button>(R.id.actionBtn)
+
+        val toggleText =
+            findViewById<TextView>(R.id.toggleText)
+
+        val forgotText =
+            findViewById<TextView>(R.id.forgotText)
+
+        val roles = arrayOf(
+            "User",
+            "Admin"
+        )
+
         roleSpinner.adapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, roles)
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_dropdown_item,
+                roles
+            )
 
         var isLogin = true
 
-        btn.setOnClickListener {
+        actionBtn.setOnClickListener {
 
-            val user = username.text.toString().trim()
-            val pass = password.text.toString().trim()
-            val role = roleSpinner.selectedItem.toString()
+            val empId =
+                username.text.toString().trim()
 
+            val pass =
+                password.text.toString().trim()
 
-            if (user.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(this, "Enter all fields", Toast.LENGTH_SHORT).show()
+            val role =
+                roleSpinner.selectedItem.toString()
+
+            if (
+                empId.isEmpty() ||
+                pass.isEmpty()
+            ) {
+
+                Toast.makeText(
+                    this,
+                    "Enter all fields",
+                    Toast.LENGTH_SHORT
+                ).show()
+
                 return@setOnClickListener
             }
 
+            val savedPass =
+                usersPrefs.getString(
+                    "${empId}_password",
+                    null
+                )
+
+            val savedRole =
+                usersPrefs.getString(
+                    "${empId}_role",
+                    null
+                )
+
             if (isLogin) {
 
-                val savedUser = prefs.getString("username", "")
-                val savedPass = prefs.getString("password", "")
-                val savedRole = prefs.getString("role", "")
+                // LOGIN
 
-                if (user == savedUser && pass == savedPass && role == savedRole) {
+                if (
+                    pass == savedPass &&
+                    role == savedRole
+                ) {
 
-                    prefs.edit().putBoolean("loggedIn", true).apply()
+                    sessionPrefs.edit()
+                        .putBoolean("loggedIn", true)
+                        .putString("employeeId", empId)
+                        .putString("role", role)
+                        .apply()
 
-                    if (role.equals("Admin", true)) {
-                        startActivity(Intent(this, AdminActivity::class.java))
+                    Toast.makeText(
+                        this,
+                        "Login Successful",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    if (role == "Admin") {
+
+                        startActivity(
+                            Intent(
+                                this,
+                                AdminActivity::class.java
+                            )
+                        )
+
                     } else {
-                        startActivity(Intent(this, HomeActivity::class.java))
+
+                        startActivity(
+                            Intent(
+                                this,
+                                HomeActivity::class.java
+                            )
+                        )
                     }
+
                     finish()
 
                 } else {
-                    Toast.makeText(this, "Invalid Login", Toast.LENGTH_SHORT).show()
+
+                    Toast.makeText(
+                        this,
+                        "Invalid Credentials",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
             } else {
 
-                // Signup
-                prefs.edit()
-                    .putString("username", user)
-                    .putString("password", pass)
-                    .putString("role", role)
-                    .putBoolean("loggedIn", true)
+                // SIGNUP
+
+                if (savedPass != null) {
+
+                    Toast.makeText(
+                        this,
+                        "Employee ID already exists",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    return@setOnClickListener
+                }
+
+                usersPrefs.edit()
+                    .putString(
+                        "${empId}_password",
+                        pass
+                    )
+                    .putString(
+                        "${empId}_role",
+                        role
+                    )
                     .apply()
 
-                Toast.makeText(this, "Signup successful", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Account Created Successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
 
-                if (role.equals("Admin", true)) {
-                    startActivity(Intent(this, AdminActivity::class.java))
-                } else {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                }
-                finish()
+                // AUTO SWITCH TO LOGIN
+
+                isLogin = true
+
+                actionBtn.text = "Login"
+
+                toggleText.text =
+                    "Don't have an account? Signup"
             }
         }
 
-        toggle.setOnClickListener {
+        // TOGGLE LOGIN/SIGNUP
+
+        toggleText.setOnClickListener {
+
             isLogin = !isLogin
 
-            btn.text = if (isLogin) "Login" else "Signup"
+            actionBtn.text =
+                if (isLogin)
+                    "Login"
+                else
+                    "Signup"
 
-            toggle.text = if (isLogin)
-                "Don't have an account? Signup"
-            else
-                "Already have an account? Login"
+            toggleText.text =
+                if (isLogin)
+                    "Don't have an account? Signup"
+                else
+                    "Already have an account? Login"
+        }
+
+        // FORGOT PASSWORD
+
+        forgotText.setOnClickListener {
+
+            val empId =
+                username.text.toString().trim()
+
+            if (empId.isEmpty()) {
+
+                Toast.makeText(
+                    this,
+                    "Enter Employee ID",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            val savedPass =
+                usersPrefs.getString(
+                    "${empId}_password",
+                    null
+                )
+
+            if (savedPass != null) {
+
+                Toast.makeText(
+                    this,
+                    "Password: $savedPass",
+                    Toast.LENGTH_LONG
+                ).show()
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "Account not found",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 }

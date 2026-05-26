@@ -16,22 +16,37 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-class MainActivity : ComponentActivity(), SensorEventListener {
+class MainActivity :
+    ComponentActivity(),
+    SensorEventListener {
 
     private var sensorManager: SensorManager? = null
     private var accelerometer: Sensor? = null
+
     private lateinit var status: TextView
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var fusedLocationClient:
+            FusedLocationProviderClient
+
     private var currentLocation: Location? = null
-    private lateinit var locationCallback: LocationCallback
+
+    private lateinit var locationCallback:
+            LocationCallback
+
+    // TIME CONTROL
 
     private var lastTime = 0L
 
-    private val window = mutableListOf<Float>()
-    private var potholeThreshold = 6f
-    private var bumpThreshold = 4f
-    private var roughThreshold = 2f
+    // WINDOW FOR SMOOTHING
+
+    private val window =
+        mutableListOf<Float>()
+
+    // THRESHOLDS
+
+    private var potholeThreshold = 10f
+    private var bumpThreshold = 7f
+    private var roughThreshold = 4f
 
     private var minSpeed = 3f
 
@@ -41,32 +56,67 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
-        status = findViewById(R.id.statusText)
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        status =
+            findViewById(R.id.statusText)
+
+        // SENSOR
+
+        sensorManager =
+            getSystemService(
+                Context.SENSOR_SERVICE
+            ) as SensorManager
+
+        accelerometer =
+            sensorManager?.getDefaultSensor(
+                Sensor.TYPE_ACCELEROMETER
+            )
 
         if (accelerometer == null) {
-            status.text = "Sensor not available"
+
+            status.text =
+                "Accelerometer Not Available"
         }
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        // LOCATION
+
+        fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(this)
+
         getLocation()
+
+        // CONFIG VALUES
+
         vehicleType =
-            intent.getStringExtra("vehicle") ?: "Car"
+            intent.getStringExtra("vehicle")
+                ?: "Car"
 
         potholeThreshold =
-            intent.getFloatExtra("pothole", 6f)
+            intent.getFloatExtra(
+                "pothole",
+                10f
+            )
 
         bumpThreshold =
-            intent.getFloatExtra("bump", 4f)
+            intent.getFloatExtra(
+                "bump",
+                7f
+            )
 
         roughThreshold =
-            intent.getFloatExtra("rough", 2f)
+            intent.getFloatExtra(
+                "rough",
+                4f
+            )
 
         minSpeed =
-            intent.getFloatExtra("speed", 3f)
+            intent.getFloatExtra(
+                "speed",
+                3f
+            )
     }
+
+    // LOCATION FUNCTION
 
     private fun getLocation() {
 
@@ -74,48 +124,51 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            )
+            != PackageManager.PERMISSION_GRANTED
         ) {
 
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ),
                 100
             )
+
             return
         }
 
-        val locationRequest = LocationRequest.Builder(
-            Priority.PRIORITY_HIGH_ACCURACY,
-            1000
-        ).build()
+        val locationRequest =
+            LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                1000
+            ).build()
 
-        // Get last known location first
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+        // LAST LOCATION
 
-            if (location != null) {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
 
-                currentLocation = location
+                if (location != null) {
 
-                status.text =
-                    "GPS Connected\nLat: ${location.latitude}\nLon: ${location.longitude}"
-            }
-        }
-
-        // Continuous location updates
-        locationCallback = object : LocationCallback() {
-
-            override fun onLocationResult(result: LocationResult) {
-
-                currentLocation = result.lastLocation
-
-                currentLocation?.let {
-
-                    status.text =
-                        "GPS Connected\nLat: ${it.latitude}\nLon: ${it.longitude}"
+                    currentLocation = location
                 }
             }
-        }
+
+        // LIVE LOCATION
+
+        locationCallback =
+            object : LocationCallback() {
+
+                override fun onLocationResult(
+                    result: LocationResult
+                ) {
+
+                    currentLocation =
+                        result.lastLocation
+                }
+            }
 
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
@@ -123,72 +176,131 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             mainLooper
         )
     }
+
+    // SENSOR START
+
     override fun onResume() {
         super.onResume()
+
         accelerometer?.let {
-            // 🔥 Faster sensor updates for better detection
-            sensorManager?.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+
+            sensorManager?.registerListener(
+                this,
+                it,
+                SensorManager.SENSOR_DELAY_GAME
+            )
         }
     }
+
+    // SENSOR STOP
 
     override fun onPause() {
         super.onPause()
 
         sensorManager?.unregisterListener(this)
 
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        fusedLocationClient.removeLocationUpdates(
+            locationCallback
+        )
     }
 
-    override fun onSensorChanged(event: SensorEvent?) {
+    // MAIN DETECTION LOGIC
 
-        if (event == null || event.values.size < 3) return
+    override fun onSensorChanged(
+        event: SensorEvent?
+    ) {
+
+        if (
+            event == null ||
+            event.values.size < 3
+        ) return
 
         if (currentLocation == null) {
-            status.text = "📡 Getting GPS..."
+
+            status.text =
+                "Getting GPS Location..."
+
             return
         }
+
+        // SENSOR VALUES
 
         val x = event.values[0]
         val y = event.values[1]
         val z = event.values[2]
 
-        val magnitude = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
-        val delta = abs(magnitude - SensorManager.GRAVITY_EARTH)
+        // TOTAL FORCE
 
-//        val verticalShock = abs(z - SensorManager.GRAVITY_EARTH)
+        val magnitude =
+            sqrt(
+                (x * x + y * y + z * z).toDouble()).toFloat()
+
+        // REMOVE GRAVITY EFFECT
+
+        val delta =
+            abs(magnitude - SensorManager.GRAVITY_EARTH)
+
         val verticalShock = delta
 
-        val currentTime = System.currentTimeMillis()
+        // LOCATION + SPEED
 
-        val lat = currentLocation!!.latitude
-        val lon = currentLocation!!.longitude
+        val lat =
+            currentLocation!!.latitude
 
-        val speed = currentLocation!!.speed
+        val lon =
+            currentLocation!!.longitude
 
+        val speed =
+            currentLocation!!.speed
 
-        if (speed <minSpeed) {
+        // IGNORE LOW SPEED
+
+        if (speed < minSpeed) {
 
             status.text =
-                "Vehicle Almost Stationary\nSpeed: %.2f m/s"
-                    .format(speed)
+
+                "Vehicle Moving Slowly\n\n" +
+
+                        "Current Speed: %.2f m/s"
+                            .format(speed)
 
             return
         }
 
+
         window.add(verticalShock)
 
+
         if (window.size > 20) {
+
             window.removeAt(0)
         }
 
-        if (window.size >= 10 && currentTime - lastTime > 3000){
+        val currentTime =
+            System.currentTimeMillis()
 
-            val max = window.maxOrNull() ?: 0f
-            val min = window.minOrNull() ?: 0f
-            val variation = max - min
 
-            val average = window.average().toFloat()
-            val shockDifference = max - average
+        if (
+            window.size >= 10 &&
+            currentTime - lastTime > 3000
+        ) {
+
+            val max =
+                window.maxOrNull() ?: 0f
+
+            val min =
+                window.minOrNull() ?: 0f
+
+            val variation =
+                max - min
+
+            val average =
+                window.average().toFloat()
+
+            val shockDifference =
+                max - average
+
+            // NOISE FILTERING
 
             if (shockDifference < 3f) {
                 return
@@ -198,32 +310,44 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 return
             }
 
+            // DETECTION
 
             val type = when {
 
-                variation > potholeThreshold && max > potholeThreshold ->
+                variation > potholeThreshold &&
+                        max > potholeThreshold ->
+
                     "POTHOLE"
 
-                variation > bumpThreshold && max > bumpThreshold ->
+                variation > bumpThreshold &&
+                        max > bumpThreshold ->
+
                     "SPEED_BUMP"
 
                 variation > roughThreshold ->
+
                     "ROUGH_ROAD"
 
                 else -> "NONE"
             }
-//            val level = when {
-//                variation > 12 -> "HIGH"
-//                variation > 6 -> "MEDIUM"
-//                variation > 3 -> "LOW"
-//                else -> "NONE"
-//            }
+
+            // LEVEL
+
             val level = when {
-                variation > potholeThreshold -> "HIGH"
-                variation > bumpThreshold -> "MEDIUM"
-                variation > roughThreshold -> "LOW"
+
+                variation > potholeThreshold ->
+                    "HIGH"
+
+                variation > bumpThreshold ->
+                    "MEDIUM"
+
+                variation > roughThreshold ->
+                    "LOW"
+
                 else -> "NONE"
             }
+
+            // SHOW RESULT
 
             if (type != "NONE") {
 
@@ -231,25 +355,28 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
                 status.text =
 
-                    "🚧 $type DETECTED\n\n" +
+                    "Detection Found\n\n" +
+
+                            "Type: $type\n\n" +
 
                             "Vehicle: $vehicleType\n" +
 
                             "Level: $level\n\n" +
 
-                            "Variation: %.2f\n".format(variation) +
+                            "Variation: %.2f\n"
+                                .format(variation) +
 
-                            "Max Shock: %.2f\n".format(max) +
+                            "Shock: %.2f\n"
+                                .format(max) +
 
-                            "Speed: %.2f m/s\n\n".format(speed) +
+                            "Speed: %.2f m/s\n\n"
+                                .format(speed) +
 
-                            "Pothole Threshold: $potholeThreshold\n" +
+                            "Latitude:\n$lat\n\n" +
 
-                            "Bump Threshold: $bumpThreshold\n" +
+                            "Longitude:\n$lon"
 
-                            "Rough Threshold: $roughThreshold\n\n" +
-
-                            "Lat: $lat\nLon: $lon"
+                // SAVE CSV
 
                 safeSave(
                     type,
@@ -258,9 +385,12 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                     speed,
                     lat,
                     lon
-                )            }
+                )
+            }
         }
     }
+
+    // SAVE CSV
 
     private fun safeSave(
         type: String,
@@ -270,17 +400,43 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         lat: Double,
         lon: Double
     ) {
+
         try {
-            val dir = getExternalFilesDir(null) ?: return
-            val file = File(dir, "road_anomalies.csv")
+
+            val dir =
+                getExternalFilesDir(null)
+                    ?: return
+
+            val file =
+                File(
+                    dir,
+                    "road_anomalies.csv"
+                )
+
+            // HEADER
 
             if (!file.exists()) {
-                file.writeText(
-                    "Vehicle,Type,Level,Intensity,Speed,PotholeThreshold,BumpThreshold,RoughThreshold,Latitude,Longitude,Time\n"
-                )            }
 
-            val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                .format(Date())
+                file.writeText(
+
+                    "Vehicle,Type,Level," +
+                            "Intensity,Speed," +
+                            "PotholeThreshold," +
+                            "BumpThreshold," +
+                            "RoughThreshold," +
+                            "Latitude,Longitude,Time\n"
+                )
+            }
+
+            // TIME
+
+            val time =
+                SimpleDateFormat(
+                    "yyyy-MM-dd HH:mm:ss",
+                    Locale.getDefault()
+                ).format(Date())
+
+            // SAVE ROW
 
             file.appendText(
 
@@ -306,10 +462,33 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
                         "$time\n"
             )
+
         } catch (e: Exception) {
-            status.text = "File error"
+
+            status.text =
+                "Error Saving File"
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    override fun onAccuracyChanged(
+        sensor: Sensor?,
+        accuracy: Int
+    ) {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        try {
+
+            sensorManager?.unregisterListener(this)
+
+            fusedLocationClient.removeLocationUpdates(
+                locationCallback
+            )
+
+        } catch (e: Exception) {
+        }
+    }
 }
+
+
